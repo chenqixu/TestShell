@@ -31,6 +31,8 @@ target/
 *.java~
 *.properties~
 *.xml~
+*.dat
+*.alarm
 hs_err_pid*
 
 # system ignore
