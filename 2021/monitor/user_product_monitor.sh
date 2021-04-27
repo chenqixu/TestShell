@@ -16,20 +16,29 @@ monitor_path=D:/Document/Workspaces/Git/TestShell/2021/data/
 ###############################
 ##进行告警，并判断是否能否重启
 ###############################
-function exec() {
+function exec1() {
 path=$1
 keyword=$2
 mm=`date '+%b'`
 dd=`date '+%d'`
 hh=`date '+%H'`
-nowh=`date '+%Y-%m-%d %H:'`
+nowh=`date -d '-1 hour' '+%Y-%m-%d %H:'`
 echo "`date +"%Y-%m-%d %H:%M:%S"`" >> ${monitor_path}${keyword}.dat
 echo "path is $path, keyword is $keyword" >> ${monitor_path}${keyword}.dat
 echo "mm is $mm, dd is $dd, hh is $hh, nowh is $nowh" >> ${monitor_path}${keyword}.dat
-ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep -v log.1|grep -v log.2|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{print cnt,exec,exec/cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh >> ${monitor_path}${keyword}.dat
+ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep -v log.1|grep -v log.2|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{if(cnt>0) print cnt,exec,exec/cnt; else print cnt,exec,cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh >> ${monitor_path}${keyword}.dat
+#result1=`ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep -v log.1|grep -v log.2|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{if(cnt>0) print cnt,exec,exec/cnt; else print cnt,exec,cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh`
+##去空格
+#result2=`echo ${result1}| sed 's/ //g'`
+##判断是否有结果
+#if [[ "${result2}" == "" ]]; then
+#echo "a ${result1}"
+#else
+#echo "b ${result1}"
+#fi
 }
 
 ###############################
 ##main
 ###############################
-exec "D:/Document/Workspaces/Git/TestShell/2021/data/" "kafka_to_jdbc_mixed_user_product-worker"
+exec1 "D:/Document/Workspaces/Git/TestShell/2021/data/" "kafka_to_jdbc_mixed_user_product-worker"
