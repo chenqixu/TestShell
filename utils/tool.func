@@ -1,31 +1,37 @@
 #!/bin/bash
+#########打印
+##参数1：打印内容
 function f_print_cmd()
 {
   # red words on yellow bottom
   echo -e "\033[42;31m${1}\033[0m"
 }
 
+#########打印
+##参数1：打印内容
 function f_print_info()
 {
   # Blue words on yellow bottom
   echo -e "\033[42;34m${1}\033[0m"
 }
 
-# param1: host
-# param2: user
-# param3: passwd
-# param4: cmd
+#########远程执行命令
+##参数1: host
+##参数2: user
+##参数3: passwd
+##参数4: cmd
 function f_exec_cmd()
 {
         #f_print_cmd "sshpass -p ${3} ssh -o StrictHostKeychecking=no -l ${2} ${1} \"source ~/.bash_profile;${4}\""
         sshpass -p ${3} ssh -o StrictHostKeychecking=no -l ${2} ${1} "source ~/.bash_profile;${4}"
 }
 
-# param1: host
-# param2: user
-# param3: passwd
-# param4: file_path
-# param5: file_name
+#########远程拷贝
+##参数1: host
+##参数2: user
+##参数3: passwd
+##参数4: file_path
+##参数5: file_name
 function f_scp()
 {
         #f_print_cmd "sshpass -p ${3} scp ${5} ${2}@${1}:${4}"
@@ -52,4 +58,29 @@ fun_log()
                 ;;
         esac
         echo -e "`date +"%Y-%m-%d %H:%M:%S"` [${log_lev}] $2";
+}
+
+#########开始时间
+v_start="";
+fun_start() {
+v_start=`date +%s`;
+}
+
+#########结束时间
+v_stop="";
+fun_stop() {
+v_stop=`date +%s`;
+}
+
+#########计算时间消耗
+fun_cost() {
+    start_time=`date -d @$v_start +"%Y-%m-%d %H:%M:%S"`
+    stop_time=`date -d @$v_stop +"%Y-%m-%d %H:%M:%S"`
+    echo "开始时间：$start_time，结束时间：$stop_time，耗时：$(($v_stop-$v_start)) 秒";
+}
+
+#########停止时间计算并统计消耗
+fun_stopAndGet() {
+    fun_stop;
+    fun_cost;
 }

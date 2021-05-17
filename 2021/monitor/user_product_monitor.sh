@@ -11,7 +11,7 @@
 #cd /home/jstorm/edc-app/jstorm-2.1.1/logs/kafka_to_jdbc_mixed_user_product_t2
 #ll|grep -v gc|grep -v metrics|grep log|grep -v log.1|grep -v log.2|grep 'Apr 27'|awk '{print "grep 执行耗时 "$9"|grep '\''2021-04-27 08:'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{print cnt,exec,exec/cnt}'\''"}' |sh
 
-monitor_path=D:/Document/Workspaces/Git/TestShell/2021/data/
+monitor_path="D:/Document/Workspaces/Git/TestShell/2021/data/"
 
 ###############################
 ##进行告警，并判断是否能否重启
@@ -36,6 +36,19 @@ ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep -v log.1|
 #else
 #echo "b ${result1}"
 #fi
+}
+
+function exec2() {
+path=$1
+keyword=$2
+mm=`date '+%b'`
+dd=`date '+%d'`
+hh=`date '+%H'`
+nowh=`date '+%Y-%m-%d %H:'`
+echo "`date +"%Y-%m-%d %H:%M:%S"`"
+echo "path is $path, keyword is $keyword"
+echo "mm is $mm, dd is $dd, hh is $hh, nowh is $nowh"
+ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep -v log.1|grep -v log.2|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{if(cnt>0) print cnt,exec,exec/cnt; else print cnt,exec,cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh
 }
 
 ###############################
