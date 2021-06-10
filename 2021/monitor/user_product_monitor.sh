@@ -5,6 +5,7 @@
 ##运行周期：每小时1次
 ##创建作者：
 ##创建日期：2021-04-27
+##修改日期：2021-06-10，修复23点时候取不到值的缺陷
 #############################################################################################
 
 #示例
@@ -23,6 +24,13 @@ mm=`date '+%b'`
 dd=`date '+%d'`
 hh=`date '+%H'`
 nowh=`date -d '-1 hour' '+%Y-%m-%d %H:'`
+if [[ "${hh}" -eq "00" ]]; then
+  dd=`date -d '-1 hour' '+%d'`
+fi
+dd_len=`expr length "${dd}"`
+if [[ ${dd_len} -eq 1 ]]; then
+  dd=" ${dd}"
+fi
 echo "`date +"%Y-%m-%d %H:%M:%S"`" >> ${monitor_path}${keyword}.dat
 echo "path is $path, keyword is $keyword" >> ${monitor_path}${keyword}.dat
 echo "mm is $mm, dd is $dd, hh is $hh, nowh is $nowh" >> ${monitor_path}${keyword}.dat
@@ -45,6 +53,10 @@ mm=`date '+%b'`
 dd=`date '+%d'`
 hh=`date '+%H'`
 nowh=`date '+%Y-%m-%d %H:'`
+dd_len=`expr length "${dd}"`
+if [[ ${dd_len} -eq 1 ]]; then
+  dd=" ${dd}"
+fi
 echo "`date +"%Y-%m-%d %H:%M:%S"`"
 echo "path is $path, keyword is $keyword"
 echo "mm is $mm, dd is $dd, hh is $hh, nowh is $nowh"
