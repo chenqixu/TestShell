@@ -33,6 +33,9 @@ fi
 COUNT_IS_ERR=0
 LAG_IS_ERR=0
 OGG_SCHEMA_IS_ERR=0
+ISCONSUMER_IS_ERR=0
+##监控告警值
+bomc_ret=0
 
 ######################################################################
 ##脚本核心逻辑处理
@@ -111,6 +114,28 @@ done
 }
 
 ######################################################################
+##判断应用有没消费
+##param1：日志名称
+##param2：话题
+######################################################################
+function isConsumer() {
+log_name=$1
+topic=$2
+for t in ${topic}; do
+  lag=`cat ${LOGS_PATH}/${log_name}.log|awk '{if( $1 == v_name) print $1","$6}' v_name=${t}`
+  for tmp_lag in ${lag}; do
+    topic=`echo ${tmp_lag}|awk -F "," '{print $1}'`
+    consumer_id=`echo ${tmp_lag}|awk -F "," '{print $2}'`
+    if [[ ${consumer_id} = "-" ]]; then
+      fun_log 2 "【没有应用在消费】话题：${topic} 客户端id：${consumer_id}"
+      add_flag "ISCONSUMER_IS_ERR"
+      break
+    fi
+  done
+done
+}
+
+######################################################################
 ##判断源端是否调整字段
 ######################################################################
 function ogg_schema() {
@@ -127,7 +152,6 @@ if [[ ${ret} != "true" ]]; then
 fi
 }
 
-
 ######################################################################
 ##脚本开始处理标志
 ######################################################################
@@ -135,14 +159,16 @@ fun_log 0 "--------------------------------开始脚本逻辑处理-------------
 #monitor
 count "kafka_group" "${multiple_topic}" "${multiple_cnt_arr[*]}"
 count "kafka_group_single" "${single_topic}" "${single_cnt_arr[*]}"
+isConsumer "kafka_group" "${multiple_topic}"
 lag "kafka_group" "${multiple_topic}"
 lag "kafka_group_single" "${single_topic}"
 ogg_schema
 
-let bomc_ret=${COUNT_IS_ERR}+${LAG_IS_ERR}*10000+${OGG_SCHEMA_IS_ERR}*100000000
+let bomc_ret=${COUNT_IS_ERR}+${LAG_IS_ERR}*10000+${OGG_SCHEMA_IS_ERR}*100000000+${ISCONSUMER_IS_ERR}*1000000000000
 fun_log 0 "个位十位百位千位：表示【kafka消费个数异常】个数"
 fun_log 0 "万位十万位百万位千万位：表示【kafka消费积压】个数"
 fun_log 0 "亿位十亿位百亿位千亿位：表示【源端调整字段】个数"
+fun_log 0 "万亿位十万亿位百万亿位千万亿位：表示【没有应用在消费】个数"
 fun_log 0 "告警值：${bomc_ret}"
 ##告警值写入目标文件
 if [[ ${system_name} =~ "MINGW64_NT" ]]; then
