@@ -98,20 +98,66 @@ echo "avg cost is: ${avg_cost}"
 rm -f ${tmpfile}
 }
 
+#检查标志
+CHECK_TAG=0
+function check_task_name() {
+#检查是否在task_list里
+for app1 in `cat ${FWDIR}/task_list.txt`; do
+  if [[ "${app1}" = "${1}" ]]; then
+    CHECK_TAG=1
+    break
+  fi
+done
+}
+
+#打印task_list
+function printTaskList() {
+namelist=`cat ${FWDIR}/task_list.txt`;
+echo "############################"
+echo "##task_list: "
+echo "############################"
+echo "${namelist}"
+echo "############################"
+}
+
 ###############################
 ##main
 ###############################
-if [ $# -eq 0 ]; then
-  for app1 in `cat ${FWDIR}/task_list.txt`
-  do
-  #echo "${jstorm_logs}${app1}/"
-  #echo "${app1}-worker"
-  exec1 "${jstorm_logs}${app1}/" "${app1}-worker"
-  done
-elif [ $# -eq 1 ]; then
-  exec2 "${jstorm_logs}${1}/" "${1}-worker"
-elif [ $# -eq 2 ]; then
+if [[ $# -eq 1 ]]; then
+  #$1 app_name or all
+  if [[ "${1}" = "all" ]]; then
+    for app1 in `cat ${FWDIR}/task_list.txt`; do
+      exec1 "${jstorm_logs}${app1}/" "${app1}-worker"
+    done
+  else
+    #检查是否在task_list里
+    check_task_name "${1}"
+    #执行
+    if [[ ${CHECK_TAG} -ne 1 ]]; then
+      echo "输入的参数不在task_list.txt中，请检查！"
+      printTaskList
+      exit 1
+    else
+      exec2 "${jstorm_logs}${1}/" "${1}-worker"
+    fi
+  fi
+elif [[ $# -eq 2 ]]; then
   #$1 app_name
   #$2 cycle
-  sum_day "${jstorm_logs}${1}/" "${1}-worker" "$2"
+  #检查是否在task_list里
+  check_task_name "${1}"
+  #执行
+  if [[ ${CHECK_TAG} -ne 1 ]]; then
+    echo "输入的参数不在task_list.txt中，请检查！"
+    printTaskList
+    exit 1;
+  else
+    sum_day "${jstorm_logs}${1}/" "${1}-worker" "$2"
+  fi
+else
+  echo "请输入参数："
+  echo "1、输入app_name，查看app_name当前统计值"
+  echo "2、输入app_name cycle[yyyy-MM-dd]，查看app_name在某个周期的统计值"
+  printTaskList
+  exit 1;
 fi

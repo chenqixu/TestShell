@@ -160,6 +160,7 @@ fun_log 0 "--------------------------------开始脚本逻辑处理-------------
 count "kafka_group" "${multiple_topic}" "${multiple_cnt_arr[*]}"
 count "kafka_group_single" "${single_topic}" "${single_cnt_arr[*]}"
 isConsumer "kafka_group" "${multiple_topic}"
+isConsumer "kafka_group_single" "${single_topic}"
 lag "kafka_group" "${multiple_topic}"
 lag "kafka_group_single" "${single_topic}"
 ogg_schema
@@ -172,7 +173,7 @@ fun_log 0 "万亿位十万亿位百万亿位千万亿位：表示【没有应用
 fun_log 0 "告警值：${bomc_ret}"
 ##告警值写入目标文件
 if [[ ${system_name} =~ "MINGW64_NT" ]]; then
-  echo ${bomc_ret} > ${FWDIR}/../tmp/bomc_file/kafkaToAdbMonitor.txt
+  echo ${bomc_ret} > ${FWDIR}/../tmp/bomc_file/kafkaToAdbMonitor.log
 else
   echo ${bomc_ret} > /tmp/bomc_file/kafkaToAdbMonitor.txt
 fi
