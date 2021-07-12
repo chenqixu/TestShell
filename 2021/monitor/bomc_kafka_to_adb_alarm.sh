@@ -165,11 +165,11 @@ lag "kafka_group" "${multiple_topic}"
 lag "kafka_group_single" "${single_topic}"
 ogg_schema
 
-let bomc_ret=${COUNT_IS_ERR}+${LAG_IS_ERR}*10000+${OGG_SCHEMA_IS_ERR}*100000000+${ISCONSUMER_IS_ERR}*1000000000000
-fun_log 0 "个位十位百位千位：表示【kafka消费个数异常】个数"
-fun_log 0 "万位十万位百万位千万位：表示【kafka消费积压】个数"
-fun_log 0 "亿位十亿位百亿位千亿位：表示【源端调整字段】个数"
-fun_log 0 "万亿位十万亿位百万亿位千万亿位：表示【没有应用在消费】个数"
+let bomc_ret=${COUNT_IS_ERR}+${LAG_IS_ERR}+${ISCONSUMER_IS_ERR}+${OGG_SCHEMA_IS_ERR}*10000
+fun_log 0 "【kafka消费个数异常】个数：${COUNT_IS_ERR}"
+fun_log 0 "【kafka消费积压】个数：${LAG_IS_ERR}"
+fun_log 0 "【没有应用在消费】个数：${ISCONSUMER_IS_ERR}"
+fun_log 0 "【源端调整字段】个数：${OGG_SCHEMA_IS_ERR}"
 fun_log 0 "告警值：${bomc_ret}"
 ##告警值写入目标文件
 if [[ ${system_name} =~ "MINGW64_NT" ]]; then
