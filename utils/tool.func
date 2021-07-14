@@ -26,16 +26,28 @@ function f_exec_cmd()
         sshpass -p ${3} ssh -o StrictHostKeychecking=no -l ${2} ${1} "source ~/.bash_profile;${4}"
 }
 
-#########远程拷贝
+#########拷贝到远程
 ##参数1: host
 ##参数2: user
 ##参数3: passwd
-##参数4: file_path
-##参数5: file_name
+##参数4: 远程主机路径
+##参数5: 本地文件名
 function f_scp()
 {
         #f_print_cmd "sshpass -p ${3} scp ${5} ${2}@${1}:${4}"
         sshpass -p ${3} scp ${5} ${2}@${1}:${4}
+}
+
+#########远程拷贝到本地
+##参数1: host
+##参数2: user
+##参数3: passwd
+##参数4: 远程主机路径+文件名
+##参数5: 本地主机路径
+function f_scp_to_local()
+{
+        #f_print_cmd "sshpass -p ${3} scp ${2}@${1}:${4} ${5}"
+        sshpass -p ${3} scp ${2}@${1}:${4} ${5}
 }
 
 #########日志输出函数
