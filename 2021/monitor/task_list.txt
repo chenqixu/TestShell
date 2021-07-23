@@ -1,1 +1,2 @@
 kafka_to_jdbc_mixed_user_product
+kafka_to_jdbc_mixed_users
