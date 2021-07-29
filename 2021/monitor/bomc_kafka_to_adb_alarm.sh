@@ -39,6 +39,10 @@ MULTIPLE_OGG_SCHEMA_IS_ERR=0
 SINGLE_COUNT_IS_ERR=0
 SINGLE_LAG_IS_ERR=0
 SINGLE_CONSUMER_IS_ERR=0
+##单线程新集群-标志位
+SINGLE_10_COUNT_IS_ERR=0
+SINGLE_10_LAG_IS_ERR=0
+SINGLE_10_CONSUMER_IS_ERR=0
 ##监控告警值
 multiple_kafka=0
 single_kafka=0
@@ -51,6 +55,7 @@ function monitor() {
 ##kafka监控
 sh ${NLTOOL_COMMAND} kafka_group toolconfig/kafka_group.yaml --group_id ADB_TEST > ${LOGS_PATH}/kafka_group.log
 sh ${NLTOOL_COMMAND} kafka_group toolconfig/kafka_group.yaml --group_id adb_single > ${LOGS_PATH}/kafka_group_single.log
+sh ${NLTOOL_COMMAND} kafka_group toolconfig/kafka_group_10.yaml > ${LOGS_PATH}/kafka_group_single_10.log
 
 ##ogg schema监控
 sh ${NLTOOL_COMMAND} check_ogg_schema_multiple toolconfig/check_ogg_schema_multiple.yaml > ${LOGS_PATH}/check_ogg_schema_all.log
@@ -62,21 +67,24 @@ crontab_task=`cat /tmp/bomc_file/kafkaToAdbCrontabMonitor.txt`
 
 ##多分区
 multiple_topic="FLAT_NMC_CCS_BROADBAND_USER
-FLAT_NMC_CCS_USER_ODFW
 FLAT_NMC_CCS_USER
 FLAT_NMC_CCS_ITV_USERS
 NMC_FLAT_B_BRB_CUS_BROADBAND_MOP_MANAGER_R_I_V1
-FLAT_USER_ADDITIONAL_INFO
 NMC_FLAT_B_CUS_CUS_NAME_RECORD_INFO_R_I_V1
 NMC_FLAT_B_TRD_UN_COMMON_FLOW_R_I_V1"
 #FLAT_B_BIL_OUTER_PLATFORM_USER_R_I_V1#定时同步
-multiple_cnt_arr=(6 6 3 1 6 1 6 6)
+multiple_cnt_arr=(6 3 1 6 6 6)
 
 ##单分区
 single_topic="NMC_TB_B_RES_CHNL_STORAGE_SALES_R_I_V1
 NMC_TB_B_MKT_RES_PIECE_TYPE_GOODS_CONSUME_R_I_V1
 NMC_TB_B_CUS_USER_PRODUCT_R_I_V1"
 single_cnt_arr=(1 1 1)
+
+##单分区新集群
+single_10_topic="USER_ADDITIONAL_INFO
+NMC_CCS_USER_ODFW_EXPORT_INFO"
+single_10_cnt_arr=(1 1)
 
 ##积压告警值
 limit=20
@@ -183,10 +191,13 @@ fun_log 0 "--------------------------------开始脚本逻辑处理-------------
 #monitor
 count "kafka_group" "${multiple_topic}" "${multiple_cnt_arr[*]}" "MULTIPLE_COUNT_IS_ERR"
 count "kafka_group_single" "${single_topic}" "${single_cnt_arr[*]}" "SINGLE_COUNT_IS_ERR"
+count "kafka_group_single_10" "${single_10_topic}" "${single_10_cnt_arr[*]}" "SINGLE_10_COUNT_IS_ERR"
 isConsumer "kafka_group" "${multiple_topic}" "MULTIPLE_CONSUMER_IS_ERR"
 isConsumer "kafka_group_single" "${single_topic}" "SINGLE_CONSUMER_IS_ERR"
+isConsumer "kafka_group_single_10" "${single_10_topic}" "SINGLE_10_CONSUMER_IS_ERR"
 lag "kafka_group" "${multiple_topic}" "MULTIPLE_LAG_IS_ERR"
 lag "kafka_group_single" "${single_topic}" "SINGLE_LAG_IS_ERR"
+lag "kafka_group_single_10" "${single_10_topic}" "SINGLE_10_LAG_IS_ERR"
 ogg_schema "MULTIPLE_OGG_SCHEMA_IS_ERR"
 
 #【数据同步】ADB实时同步-多线程-kafka消费异常监控告警
@@ -194,7 +205,7 @@ let multiple_kafka=${MULTIPLE_COUNT_IS_ERR}+${MULTIPLE_LAG_IS_ERR}+${MULTIPLE_CO
 #【数据同步】ADB实时同步-多线程-源端调整字段异常监控告警
 multiple_schema=${MULTIPLE_OGG_SCHEMA_IS_ERR}
 #【数据同步】ADB实时同步-单线程-kafka消费异常监控告警
-let single_kafka=${SINGLE_COUNT_IS_ERR}+${SINGLE_LAG_IS_ERR}+${SINGLE_CONSUMER_IS_ERR}
+let single_kafka=${SINGLE_COUNT_IS_ERR}+${SINGLE_LAG_IS_ERR}+${SINGLE_CONSUMER_IS_ERR}+${SINGLE_10_COUNT_IS_ERR}+${SINGLE_10_CONSUMER_IS_ERR}+${SINGLE_10_LAG_IS_ERR}
 #【数据同步】ADB实时同步-定时任务异常监控告警
 
 fun_log 0 "【多线程-kafka消费异常监控告警】告警个数：${multiple_kafka}"

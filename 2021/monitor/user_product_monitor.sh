@@ -25,7 +25,7 @@ fi
 FWDIR="$(cd `dirname $0`;pwd)"
 
 ###############################
-##进行告警，并判断是否能否重启
+##每小时执行一次，统计上个小时数据
 ###############################
 function exec1() {
 path=$1
@@ -47,6 +47,10 @@ echo "mm is $mm, dd is $dd, hh is $hh, nowh is $nowh" >> ${monitor_path}${keywor
 ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{print cnt,exec,exec/cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh >> ${monitor_path}${keyword}.dat
 }
 
+
+###############################
+##统计当前小时数据
+###############################
 function exec2() {
 path=$1
 keyword=$2
@@ -64,6 +68,46 @@ echo "mm is $mm, dd is $dd, hh is $hh, nowh is $nowh"
 ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{print cnt,exec,exec/cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh
 }
 
+
+###############################
+##按小时统计数据
+##param1 路径
+##param2 关键字
+##param3 小时周期：2021-07-23 00
+###############################
+function sum_hour() {
+path=$1
+keyword=$2
+cycle="${3}:00:00"
+mm=`date -d "${cycle}" '+%b'`
+dd=`date -d "${cycle}" '+%-d'`
+hh=`date -d "${cycle}" '+%H'`
+nowh=`date -d "${cycle}" '+%Y-%m-%d %H:'`
+dd_len=`expr length "${dd}"`
+if [[ ${dd_len} -eq 1 ]]; then
+  dd=" ${dd}"
+fi
+if [[ ${system_name} =~ "MINGW64_NT" ]]; then
+  tmpfile="D:/Document/Workspaces/Git/TestShell/2021/tmp/${keyword}_sum_hour"
+else
+  tmpfile="/var/tmp/${keyword}_sum_hour"
+fi
+rm -f ${tmpfile}
+ls -l ${path}|grep ${keyword}|grep -v gc|grep -v metrics|grep log|grep "$mm $dd"|awk '{print "grep 执行耗时 "v_path$9"|grep '\''"v_nowh"'\''|awk -F '\''：'\'' '\''{print $2,$4}'\''|awk -F '\''，执行结果 '\'' '\''{cnt+=$1;exec+=$2}END{print cnt,exec,exec/cnt}'\''"}' v_nowh="$nowh" v_path="$path"|sh >> ${tmpfile}
+sum_cnt=`cat ${tmpfile}|awk '{cnt+=$1}END{print cnt}'`
+all_cost=`cat ${tmpfile}|awk '{cnt+=$2}END{print cnt}'`
+avg_cost=`expr ${all_cost} / ${sum_cnt}`
+echo "【keyword】 ${keyword} 【cycle】 ${nowh} 【sum_cnt】 ${sum_cnt} 【all_cost】 ${all_cost}"
+rm -f ${tmpfile}
+}
+
+
+###############################
+##按天统计数据
+##param1 路径
+##param2 关键字
+##param3 天周期：2021-07-23
+###############################
 function sum_day() {
 path=$1
 keyword=$2
@@ -98,7 +142,10 @@ echo "avg cost is: ${avg_cost}"
 rm -f ${tmpfile}
 }
 
-#检查标志
+
+###############################
+##检查标志
+###############################
 CHECK_TAG=0
 function check_task_name() {
 #检查是否在task_list里
@@ -110,7 +157,10 @@ for app1 in `cat ${FWDIR}/task_list.txt`; do
 done
 }
 
-#打印task_list
+
+###############################
+##打印task_list
+###############################
 function printTaskList() {
 namelist=`cat ${FWDIR}/task_list.txt`;
 echo "############################"
@@ -119,6 +169,7 @@ echo "############################"
 echo "${namelist}"
 echo "############################"
 }
+
 
 ###############################
 ##main
@@ -141,9 +192,10 @@ if [[ $# -eq 1 ]]; then
       exec2 "${jstorm_logs}${1}/" "${1}-worker"
     fi
   fi
-elif [[ $# -eq 2 ]]; then
+elif [[ $# -eq 3 ]]; then
   #$1 app_name
-  #$2 cycle
+  #$2 type
+  #$3 cycle
   #检查是否在task_list里
   check_task_name "${1}"
   #执行
@@ -151,13 +203,19 @@ elif [[ $# -eq 2 ]]; then
     echo "输入的参数不在task_list.txt中，请检查！"
     printTaskList
     exit 1;
+  elif [[ "${2}" = "sum_hour" ]]; then
+    sum_hour "${jstorm_logs}${1}/" "${1}-worker" "$3"
+  elif [[ "${2}" = "sum_day" ]]; then
+    sum_day "${jstorm_logs}${1}/" "${1}-worker" "$3"
   else
-    sum_day "${jstorm_logs}${1}/" "${1}-worker" "$2"
+    echo "输入的type参数不在[sum_day|sum_hour]中，请检查！"
+    exit 1;
   fi
 else
   echo "请输入参数："
   echo "1、输入app_name，查看app_name当前统计值"
-  echo "2、输入app_name cycle[yyyy-MM-dd]，查看app_name在某个周期的统计值"
+  echo "2、输入app_name type[sum_day] cycle[yyyy-MM-dd]，查看app_name在某个周期的统计值"
+  echo "3、输入app_name type[sum_hour] cycle[yyyy-MM-dd HH]，查看app_name在某个周期的统计值"
   printTaskList
   exit 1;
 fi
