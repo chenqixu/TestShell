@@ -33,6 +33,7 @@ target/
 *.xml~
 *.dat
 *.alarm
+*.rdp
 hs_err_pid*
 
 # system ignore
