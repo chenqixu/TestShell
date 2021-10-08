@@ -10,18 +10,20 @@
 import binascii
 import io
 import os
+import time
 # import shlex
 # import subprocess
-import time
-
+import win32api
 import win32crypt
+
+import win32con
 
 
 ############################
 # 定义RDP文件中数据内容
 ############################
-def Rdp(username, passwd, rdpFileName):
-    print("login: " + username)
+def Rdp(username, passwd, rdpFileName, pos):
+    print("login: {0} , pos: {1}".format(username, pos))
     pwdHash = win32crypt.CryptProtectData(passwd, u'psw', None, None, None, 0)  # 算出密码Hash值
     pwdHash_ok = binascii.hexlify(pwdHash)
     # print("加密后的密码：" + str(pwdHash_ok))
@@ -32,7 +34,7 @@ def Rdp(username, passwd, rdpFileName):
 desktopwidth:i:1440
 desktopheight:i:900
 session bpp:i:24
-winposstr:s:1,1,800,200,1000,400
+winposstr:s:1,1,{pos_ok}
 full address:s:10.1.2.199:3389
 compression:i:1
 keyboardhook:i:2
@@ -53,7 +55,7 @@ disable menu anims:i:1
 disable themes:i:0
 disable cursor setting:i:0
 bitmapcachepersistenable:i:1
-    '''.format(username_ok=username, pwdHash_ok=str1)
+    '''.format(pos_ok=pos, username_ok=username, pwdHash_ok=str1)
     with io.open(rdpFileName, 'w', encoding='utf-16-le') as f:
         f.write(rdpFileStr)
 
@@ -83,14 +85,45 @@ def kill_mstsc():
 ############################
 passwd = '123'.encode('utf-16-le')  # 密码
 rdpFileName = 'autologin.rdp'  # 设置生成的RDP文件名
-names = ['cqx']
+# 这两个不要'cf', 'zwq',
+# names = ['cqx', 'bg', 'cjh', 'cw', 'cxn', 'fzl', 'ljc', 'ljq', 'lm', 'wbq', 'wenhm', 'wuxueyao', 'yjs', 'yqq', 'zjc', 'zlf', 'zxt', 'zyh']
+names = ['cqx', 'cjh']
+# 获取屏幕宽度
+x = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+# 获取屏幕高度
+y = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+print("x = {0} , y = {1}".format(x, y))
+# 窗口高度
+windows_high = 200
+# 计算一行几个
+row = x / windows_high
+# 计算最多几列
+column = y / windows_high
+print("row = {0} , column = {1}".format(row, column))
+row_num = 0
+column_num = 0
+i = 0
+j = 0
 for name in names:
-    Rdp(name, passwd, rdpFileName)  # 生成Rdp
+    iz = i + windows_high
+    jz = j + windows_high
+    pos = "{_i},{_j},{_iz},{_jz}".format(_i=i, _j=j, _iz=iz, _jz=jz)
+    Rdp(name, passwd, rdpFileName, pos)  # 生成Rdp
     os.system("mstsc ./autologin.rdp /console /v: 10.1.2.199:3389")  # 调用CMD命令运行远程桌面程序
-# args = shlex.split("mstsc ./111.rdp /console /v: 10.1.2.199:3389")
-# p = subprocess.Popen(args)
-# p.pid #这里的pid不正确
-time.sleep(3)
+    # args = shlex.split("mstsc ./111.rdp /console /v: 10.1.2.199:3389")
+    # p = subprocess.Popen(args)
+    # p.pid #这里取到的pid不正确
+    i = i + windows_high
+    row_num = row_num + 1
+    if row_num >= row:
+        i = 0
+        row_num = 0
+        j = j + windows_high
+        column_num = column_num + 1
+        if column_num >= column:
+            j = 0
+            column_num = 0
+time.sleep(30)
 kill_mstsc()
 
 ############################
