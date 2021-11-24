@@ -86,8 +86,8 @@ def kill_mstsc():
 passwd = '123'.encode('utf-16-le')  # 密码
 rdpFileName = 'autologin.rdp'  # 设置生成的RDP文件名
 # 这两个不要'cf', 'zwq',
-# names = ['cqx', 'bg', 'cjh', 'cw', 'cxn', 'fzl', 'ljc', 'ljq', 'lm', 'wbq', 'wenhm', 'wuxueyao', 'yjs', 'yqq', 'zjc', 'zlf', 'zxt', 'zyh']
-names = ['cqx', 'cjh']
+names = ['cqx', 'bg', 'cjh', 'cw', 'cxn', 'fzl', 'ljc', 'ljq', 'lm', 'wbq', 'wenhm', 'wuxueyao', 'yjs', 'yqq', 'zjc', 'zlf', 'zxt', 'zyh']
+# names = ['cqx', 'cjh']
 # 获取屏幕宽度
 x = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
 # 获取屏幕高度
@@ -123,7 +123,9 @@ for name in names:
         if column_num >= column:
             j = 0
             column_num = 0
-time.sleep(30)
+# 休眠120秒，这个时间应该足够所有的窗口完成登录操作
+time.sleep(120)
+# 杀掉所有的mstsc进程
 kill_mstsc()
 
 ############################
