@@ -86,7 +86,7 @@ def kill_mstsc():
 passwd = '123'.encode('utf-16-le')  # 密码
 rdpFileName = 'autologin.rdp'  # 设置生成的RDP文件名
 # 这两个不要'cf', 'zwq',
-names = ['cqx', 'bg', 'cjh', 'cw', 'cxn', 'fzl', 'ljc', 'ljq', 'lm', 'wbq', 'wenhm', 'wuxueyao', 'yjs', 'yqq', 'zjc', 'zlf', 'zxt', 'zyh']
+names = ['cqx', 'cjh', 'cw', 'cxn', 'fzl', 'ljc', 'ljq', 'lm', 'wbq', 'wenhm', 'wuxueyao', 'yjs', 'yqq', 'zjc', 'zlf', 'zxt', 'zyh', 'bg']
 # names = ['cqx', 'cjh']
 # 获取屏幕宽度
 x = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
@@ -110,6 +110,8 @@ for name in names:
     pos = "{_i},{_j},{_iz},{_jz}".format(_i=i, _j=j, _iz=iz, _jz=jz)
     Rdp(name, passwd, rdpFileName, pos)  # 生成Rdp
     os.system("mstsc ./autologin.rdp /console /v: 10.1.2.199:3389")  # 调用CMD命令运行远程桌面程序
+    # 休眠30秒，等待窗口完成登录操作
+    time.sleep(30)
     # args = shlex.split("mstsc ./111.rdp /console /v: 10.1.2.199:3389")
     # p = subprocess.Popen(args)
     # p.pid #这里取到的pid不正确
@@ -123,8 +125,6 @@ for name in names:
         if column_num >= column:
             j = 0
             column_num = 0
-# 休眠120秒，这个时间应该足够所有的窗口完成登录操作
-time.sleep(120)
 # 杀掉所有的mstsc进程
 kill_mstsc()
 
