@@ -112,6 +112,8 @@ for name in names:
     os.system("mstsc ./autologin.rdp /console /v: 10.1.2.199:3389")  # 调用CMD命令运行远程桌面程序
     # 休眠30秒，等待窗口完成登录操作
     time.sleep(30)
+    # 杀掉mstsc进程
+    kill_mstsc()
     # args = shlex.split("mstsc ./111.rdp /console /v: 10.1.2.199:3389")
     # p = subprocess.Popen(args)
     # p.pid #这里取到的pid不正确
@@ -126,7 +128,7 @@ for name in names:
             j = 0
             column_num = 0
 # 杀掉所有的mstsc进程
-kill_mstsc()
+#kill_mstsc()
 
 ############################
 # 配置说明

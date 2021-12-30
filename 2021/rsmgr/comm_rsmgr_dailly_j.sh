@@ -118,6 +118,8 @@ fun_log 0 "数据库tns:${db_tns}";
 sleep_sec="30s";
 ##程序部署路径
 app_path="/bi/app/script";
+##修改oracle客户端环境变量,处理值是中文的情况
+export NLS_LANG=AMERICAN_AMERICA.UTF8;
 
 
 ######################################################################
@@ -128,8 +130,6 @@ app_path="/bi/app/script";
 function call_produce(){
 ##执行开始时间
 local produce_begin_time=`date +"%s"`;
-##修改oracle客户端环境变量,处理值是中文的情况
-export NLS_LANG=AMERICAN_AMERICA.UTF8;
 ##执行存储过程
 local call_tmp=`
 sqlplus -s ${db_username}/${db_password}@${db_tns} <<EOF
@@ -162,7 +162,11 @@ let array_info_len=${#array[@]}-1;
 let array_code_len=${array_info_len}-1;
 local rtn_code=${array[${array_code_len}]};
 local rtn_info=${array[${array_info_len}]};
-fun_log 0 "执行存储过程${1}，RTN_CODE:${rtn_code}，RTN_INFO:${rtn_info}，执行耗时:${produce_elapse} s"
+if [[ ${rtn_code} -ne 0 ]]; then
+  fun_log 2 "执行存储过程${1}，RTN_CODE:${rtn_code}，RTN_INFO:${rtn_info}，执行耗时:${produce_elapse} s\n----------------执行存储过程异常${1}，输出日志----------------\n${call_tmp}"
+else
+  fun_log 0 "执行存储过程${1}，RTN_CODE:${rtn_code}，RTN_INFO:${rtn_info}，执行耗时:${produce_elapse} s"
+fi
 }
 
 
@@ -178,11 +182,6 @@ begin_time=`date +"%s"`;
 ##脚本逻辑处理(自定义)：脚本核心逻辑处理
 ######################################################################
 while true ; do
-	call_produce "SP_SM2_RSMGR_TEST";
-	fun_log 0 "[comm_rsmgr_dailly_j] 延迟${sleep_sec}进行下一次调用" ;
-	sleep ${sleep_sec};
-
-
 	##手动停止
 	if [[ -f ${app_path}/comm_rsmgr_dailly_j.out ]]; then
 		rm ${app_path}/comm_rsmgr_dailly_j.out;
@@ -196,6 +195,13 @@ while true ; do
 		break;
 	fi;
 
+    ##并发调用存储过程
+	call_produce "SP_SM2_RSMGR_TEST" &
+	#等待并行任务完成
+	wait
+	fun_log 0 "[comm_rsmgr_dailly_j] 延迟${sleep_sec}进行下一次调用" ;
+	sleep ${sleep_sec};
+    fun_log 0 "--------------------------------开始新一轮逻辑处理--------------------------------";
 done;
 
 
