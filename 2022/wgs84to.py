@@ -107,7 +107,8 @@ def out_of_china(lng, lat):
     :return:
     """
     # return not (lng > 73.66 and lng < 135.05 and lat > 3.86 and lat < 53.55)
-    return False
+    # 可能有负数
+    return not (lng > 0 and lat > 0)
 
 def _transformlng(lng, lat):
     """
@@ -146,6 +147,7 @@ def _transformlat(lng, lat):
 
 ############################
 # main
+# bd09 114.21892734521 29.575429778924
 ############################
 '''
 输入3个参数
