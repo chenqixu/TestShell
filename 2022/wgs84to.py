@@ -7,10 +7,6 @@ pi = 3.1415926535897932384626  # π
 a = 6378245.0  # 长半轴
 ee = 0.00669342162296594323  # 偏心率平方
 
-
-'''
-输入（经度，维度）
-'''
 def bd09_to_gcj02(bd_lon, bd_lat):
     """
     百度坐标系(BD-09)转火星坐标系(GCJ-02)
@@ -49,6 +45,12 @@ def gcj02_to_wgs84(lng, lat):
     return [lng * 2 - mglng, lat * 2 - mglat]
 
 def bd09_to_wgs84(bd_lon, bd_lat):
+    """
+    百度坐标系转GPS坐标系
+    :param bd_lon:
+    :param bd_lat:
+    :return:
+    """
     lon, lat = bd09_to_gcj02(bd_lon, bd_lat)
     return gcj02_to_wgs84(lon, lat)
 
@@ -88,6 +90,12 @@ def wgs84_to_gcj02(lng, lat):
     return [mglng, mglat]
 
 def wgs84_to_bd09(lon, lat):
+    """
+    GPS坐标系转百度坐标系
+    :param lon:
+    :param lat:
+    :return:
+    """
     lon, lat = wgs84_to_gcj02(lon, lat)
     return gcj02_to_bd09(lon, lat)
 
@@ -98,9 +106,16 @@ def out_of_china(lng, lat):
     :param lat:
     :return:
     """
-    return not (lng > 73.66 and lng < 135.05 and lat > 3.86 and lat < 53.55)
+    # return not (lng > 73.66 and lng < 135.05 and lat > 3.86 and lat < 53.55)
+    return False
 
 def _transformlng(lng, lat):
+    """
+    经度偏移
+    :param lng:
+    :param lat:
+    :return:
+    """
     ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + \
           0.1 * lng * lat + 0.1 * math.sqrt(math.fabs(lng))
     ret += (20.0 * math.sin(6.0 * lng * pi) + 20.0 *
@@ -112,6 +127,12 @@ def _transformlng(lng, lat):
     return ret
 
 def _transformlat(lng, lat):
+    """
+    纬度偏移
+    :param lng:
+    :param lat:
+    :return:
+    """
     ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + \
           0.1 * lng * lat + 0.2 * math.sqrt(math.fabs(lng))
     ret += (20.0 * math.sin(6.0 * lng * pi) + 20.0 *
@@ -126,6 +147,12 @@ def _transformlat(lng, lat):
 ############################
 # main
 ############################
+'''
+输入3个参数
+1、type [bd09 | gcj02]
+2、经度(wgs84)
+3、纬度(wgs84)
+'''
 if len(sys.argv) == 4:
     _type = sys.argv[1]
     _lon = float(sys.argv[2])
