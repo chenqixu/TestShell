@@ -9,8 +9,10 @@
 #############################################################################################
 
 import sys
+from importlib import reload
 reload(sys)
-sys.setdefaultencoding('utf-8')
+# python3已经去掉了这个方法，默认是utf-8，这个是python2的方法
+# sys.setdefaultencoding('utf-8')
 print(sys.getdefaultencoding())
 
 s='汉字'
