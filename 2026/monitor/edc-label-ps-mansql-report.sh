@@ -35,7 +35,7 @@ else
 fi
 
 #表结尾
-echo ${req_str}${req_str1}"</table>" > ${FWDIR}/info/pw_mansql_send_data.info
+echo "<h2>慢SQL个数：${req_str1_cnt}</h2>"${req_str}${req_str1}"</table>" > ${FWDIR}/info/pw_mansql_send_data.info
 echo "["`date +"%Y-%m-%d %H:%M:%S"`"]邮件内容 `cat ${FWDIR}/info/pw_mansql_send_data.info`"
 
 #标题，一分钟一次，分钟级别
