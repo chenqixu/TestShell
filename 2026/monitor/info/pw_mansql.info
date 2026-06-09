@@ -1,0 +1,42 @@
+2026-06-08 16:46:00.903 [main] INFO c.newland.storm.common.util.jdbc.ParamsParserUtil - param：{sql=[select pid,client_addr,round(EXTRACT(EPOCH FROM(now() - query_start)),2) as query_cost,query_start,now() as now,query as sql from pg_stat_activity where state in('active') and (now() - query_start) > '1s'], query_results_display=true, query_header_display=false, query_results_split=|, query_results_nvl=, dbbeans=[{name=srcBean, user_name=subject, pass_word=sdwer3*@&c, tns=jdbc:postgresql://10.43.35.226:17700/edclabel?currentSchema=edclabel, dbType=POSTGRESQL, MinIdle=1, MaxIdle=1}]}
+2026-06-08 16:46:01.019 [main] INFO com.newland.storm.common.tool.ParamUtil - 获取auto_commit配置为空，使用默认值：true
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【参数打印 | 开始】===================
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【数据库 | srcBean】DBType：POSTGRESQL，tns：jdbc:postgresql://10.43.35.226:17700/edclabel?currentSchema=edclabel，user_name：subject，pass_word：sdwer3*@&c，MaxActive：5，MinIdle：1，MaxIdle：1
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【是否自动提交 | auto_commit】true
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【查询结果是否显示 | query_results_display】true
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【查询结果分隔符 | query_results_split】|
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【插件结果为空处理 | query_results_nvl】
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【sql语句 | sqls】[select pid,client_addr,round(EXTRACT(EPOCH FROM(now() - query_start)),2) as query_cost,query_start,now() as now,query as sql from pg_stat_activity where state in('active') and (now() - query_start) > '1s']
+2026-06-08 16:46:01.020 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【参数打印 | 完成】===================
+2026-06-08 16:46:01.179 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【查询结果】22382363932416|10.43.80.42|1.38|2026-06-08 16:45:59.768557|2026-06-08 16:46:01.144611|select *,substr(split_part(task_id,'@', 2),0,8) as task_time from svc_running_task_his where task_id='11262445@20251121180505' or task_id like '11262445@20251121180505%' order by task_id desc limit 1
+2026-06-08 16:46:01.179 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【查询结果】22382363932416|10.43.80.42|1.38|2026-06-08 16:45:59.768557|2026-06-08 16:46:01.144611|select *,substr(split_part(task_id,'@', 2),0,8) as task_time from svc_running_task_his where task_id='11262445@20251121180505' or task_id like '11262445@20251121180505%' order by task_id desc limit 2
+2026-06-09 10:31:01.803 [main] INFO com.newland.storm.tool.impl.JDBCTool - 【查询结果】22377396565760|10.44.121.22|1697.31|2026-06-09 10:02:44.459444|2026-06-09 10:31:01.767851|WITH min_update AS (
+    SELECT DISTINCT
+                                  attr_version_id,
+                                  sum_type,
+                                  stat_date
+                              FROM svc_tag_update_timeliness
+                              WHERE sum_type = 2 and sum_hour = '2026060910'
+                          ),
+                               first_update AS (
+                                   SELECT
+                                       m.attr_version_id,
+                                       m.sum_type,
+                                       m.stat_date,
+                                       to_timestamp(MIN(s.sum_date), 'YYYYMMDDHH24')  AS min_update_time
+                                   FROM min_update m
+         LEFT JOIN st_attr_version t on m.attr_version_id = t.attr_version_id
+         LEFT JOIN st_tab s on t.tab_id = s.tab_id AND m.stat_date = s.data_time
+         GROUP BY m.attr_version_id, m.sum_type, m.stat_date
+         HAVING to_timestamp(MIN(s.sum_date), 'YYYYMMDDHH24') IS NOT NULL
+     )
+UPDATE svc_tag_update_timeliness t
+SET stat_first_time = f.min_update_time
+FROM first_update f
+WHERE t.attr_version_id = f.attr_version_id
+  AND t.sum_type = f.sum_type
+  AND t.stat_date = f.stat_date
+  AND t.stat_first_time IS NULL
+  AND t.sum_type = 2 AND t.sum_hour = '2026060910'
+2026-06-08 16:46:01.179 [main] INFO com.newland.storm.tool.impl.JDBCTool - 执行sql：select pid,client_addr,round(EXTRACT(EPOCH FROM(now() - query_start)),2) as query_cost,query_start,now() as now,query as sql from pg_stat_activity where state in('active') and (now() - query_start) > '1s'，执行结果：1，执行耗时：159毫秒
+2026-06-08 16:46:01.179 [main] INFO com.newland.storm.common.util.jdbc.JDBCUtil - 关闭连接池：org.apache.commons.dbcp.BasicDataSource@13c10b87
