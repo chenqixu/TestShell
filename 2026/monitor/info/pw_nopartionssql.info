@@ -1,0 +1,46 @@
+2026-06-11 16:31:48.552 [main] INFO  c.newland.storm.common.util.jdbc.ParamsParserUtil - param：{sql=[select * from (WITH table_size AS ( SELECT rel.oid, rel.relname as table_name, pg_total_relation_size(rel.oid) AS total_size_bytes, rel.reltuples::bigint AS table_rows FROM pg_namespace nsp JOIN pg_class rel ON nsp.oid = rel.relnamespace WHERE nsp.nspname = 'edclabel' AND rel.relkind = 'r' AND NOT EXISTS ( SELECT 1 FROM pg_partition ap WHERE ap.relname = rel.relname AND ap.parttype IN ('r', 'p', 's') ) AND rel.relname !~ '(bak|back|2024|2025|2026)' ) SELECT table_name, ROUND(total_size_bytes::numeric/1048576,0)||' MB' as total_size_mb, table_rows, round(total_size_bytes/nullif(table_rows,0)) as row_per_size FROM table_size WHERE total_size_bytes >= 10485760 ORDER BY total_size_bytes DESC)], query_results_display=true, query_header_display=false, query_results_split=|, query_results_nvl=, dbbeans=[{name=srcBean, user_name=subject, pass_word=sdwer3*@&c, tns=jdbc:postgresql://10.43.35.226:17700/edclabel?currentSchema=edclabel, dbType=POSTGRESQL, MinIdle=1, MaxIdle=1}]}
+2026-06-11 16:31:48.683 [main] INFO  com.newland.storm.common.tool.ParamUtil - 获取auto_commit配置为空，使用默认值：true
+2026-06-11 16:31:48.683 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【参数打印 | 开始】===================
+2026-06-11 16:31:48.683 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【数据库 | srcBean】DBType：POSTGRESQL，tns：jdbc:postgresql://10.43.35.226:17700/edclabel?currentSchema=edclabel，user_name：subject，pass_word：sdwer3*@&c，MaxActive：5，MinIdle：1，MaxIdle：1
+2026-06-11 16:31:48.683 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【是否自动提交 | auto_commit】true
+2026-06-11 16:31:48.683 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果是否显示 | query_results_display】true
+2026-06-11 16:31:48.683 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果分隔符 | query_results_split】|
+2026-06-11 16:31:48.684 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【插件结果为空处理 | query_results_nvl】
+2026-06-11 16:31:48.684 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【sql语句 | sqls】[select * from (WITH table_size AS ( SELECT rel.oid, rel.relname as table_name, pg_total_relation_size(rel.oid) AS total_size_bytes, rel.reltuples::bigint AS table_rows FROM pg_namespace nsp JOIN pg_class rel ON nsp.oid = rel.relnamespace WHERE nsp.nspname = 'edclabel' AND rel.relkind = 'r' AND NOT EXISTS ( SELECT 1 FROM pg_partition ap WHERE ap.relname = rel.relname AND ap.parttype IN ('r', 'p', 's') ) AND rel.relname !~ '(bak|back|2024|2025|2026)' ) SELECT table_name, ROUND(total_size_bytes::numeric/1048576,0)||' MB' as total_size_mb, table_rows, round(total_size_bytes/nullif(table_rows,0)) as row_per_size FROM table_size WHERE total_size_bytes >= 10485760 ORDER BY total_size_bytes DESC)]
+2026-06-11 16:31:48.684 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【参数打印 | 完成】===================
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_entity_col_lineage|1196 MB|9269735|135.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_effect_list|805 MB|4719142|179.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_vo_entity_col|795 MB|7637554|109.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_customer_groups|756 MB|409319|1938.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm_api_log|662 MB|2519174|276.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_sum_tag_value_distribution|485 MB|1689215|301.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_customer_group_attr_ref|233 MB|2053428|119.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_market_rule_rel_call_sum|199 MB|1755605|119.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_channel_group_rel|163 MB|306439|558.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_version|135 MB|421564|336.0
+2026-06-11 16:31:48.894 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_merge_tag_widetab_md_history|117 MB|904556|135.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_effect_marketing_iop|99 MB|271299|383.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】wzn_tmp|92 MB|721756|134.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_distribute_tag_metadata|91 MB|164705|581.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_running_task|64 MB|70|963496.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tag_rule|48 MB|5009|10009.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】label_4a_history|45 MB|82216|579.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_epm_group_label_iop|43 MB|300865|151.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_channel_run_count|43 MB|149568|301.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_merge_tag_list_history|39 MB|216437|187.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_channel_group_cfg|35 MB|278122|132.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm_noti_msg|34 MB|105326|336.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_evaluation_result|33 MB|356737|98.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_customer_group_count_run|25 MB|29888|864.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_customer_group_attr_file_condition|23 MB|2481|9896.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_silent_attr_d|23 MB|105175|226.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_use_half_d|22 MB|307165|74.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_ant_scheduling_task_info|19 MB|99861|200.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_portrait_count_base|15 MB|183872|84.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_sum_tag_use_timeliness|14 MB|166212|87.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_detail|14 MB|5670|2549.0
+2026-06-11 16:31:48.895 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_count_base|14 MB|183890|77.0
+2026-06-11 16:31:48.896 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_customer_group_count_base|12 MB|180728|71.0
+2026-06-11 16:31:48.896 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_analyse_tag_date|12 MB|129267|97.0
+2026-06-11 16:31:48.896 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 执行sql：select * from (WITH table_size AS ( SELECT rel.oid, rel.relname as table_name, pg_total_relation_size(rel.oid) AS total_size_bytes, rel.reltuples::bigint AS table_rows FROM pg_namespace nsp JOIN pg_class rel ON nsp.oid = rel.relnamespace WHERE nsp.nspname = 'edclabel' AND rel.relkind = 'r' AND NOT EXISTS ( SELECT 1 FROM pg_partition ap WHERE ap.relname = rel.relname AND ap.parttype IN ('r', 'p', 's') ) AND rel.relname !~ '(bak|back|2024|2025|2026)' ) SELECT table_name, ROUND(total_size_bytes::numeric/1048576,0)||' MB' as total_size_mb, table_rows, round(total_size_bytes/nullif(table_rows,0)) as row_per_size FROM table_size WHERE total_size_bytes >= 10485760 ORDER BY total_size_bytes DESC)，执行结果：34，执行耗时：212毫秒
+2026-06-11 16:31:48.896 [main] INFO  com.newland.storm.common.util.jdbc.JDBCUtil - 关闭连接池：org.apache.commons.dbcp.BasicDataSource@78b729e6

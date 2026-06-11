@@ -1,0 +1,42 @@
+2026-06-11 16:29:13.739 [main] INFO  c.newland.storm.common.util.jdbc.ParamsParserUtil - param：{sql=[select c_parent.relname,count(*) as cnt FROM pg_partition part JOIN pg_class c_parent ON part.parentid = c_parent.oid JOIN pg_namespace nsp ON c_parent.relnamespace = nsp.oid where nsp.nspname = 'edclabel' AND part.parttype IN ('p', 's') group by c_parent.relname order by count(*) desc], query_results_display=true, query_header_display=false, query_results_split=|, query_results_nvl=, dbbeans=[{name=srcBean, user_name=subject, pass_word=sdwer3*@&c, tns=jdbc:postgresql://10.43.35.226:17700/edclabel?currentSchema=edclabel, dbType=POSTGRESQL, MinIdle=1, MaxIdle=1}]}
+2026-06-11 16:29:13.879 [main] INFO  com.newland.storm.common.tool.ParamUtil - 获取auto_commit配置为空，使用默认值：true
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【参数打印 | 开始】===================
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【数据库 | srcBean】DBType：POSTGRESQL，tns：jdbc:postgresql://10.43.35.226:17700/edclabel?currentSchema=edclabel，user_name：subject，pass_word：sdwer3*@&c，MaxActive：5，MinIdle：1，MaxIdle：1
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【是否自动提交 | auto_commit】true
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果是否显示 | query_results_display】true
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果分隔符 | query_results_split】|
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【插件结果为空处理 | query_results_nvl】
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【sql语句 | sqls】[select c_parent.relname,count(*) as cnt FROM pg_partition part JOIN pg_class c_parent ON part.parentid = c_parent.oid JOIN pg_namespace nsp ON c_parent.relnamespace = nsp.oid where nsp.nspname = 'edclabel' AND part.parttype IN ('p', 's') group by c_parent.relname order by count(*) desc]
+2026-06-11 16:29:13.880 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【参数打印 | 完成】===================
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_attr_effect_count|432
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm_sys_api_log|432
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab|55
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_ext|55
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_disposition|55
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_struct|55
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_distribute_tag_metadata_his|42
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】cfg_evnt_iop_attr_info_au_91066_d|42
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_running_task_his|24
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_task_run_time_result|24
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_customer_complete_rate|24
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_customer_tag_date|22
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_customergrp_list|21
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_analyse_task|21
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_tag_update_timeliness|19
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_effect_marketing_gs_attr_act_ref_iop|17
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】edc_effect_marketing_attr_iop|17
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_struct_old|16
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_ext_old|16
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_disposition_old|15
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】st_tab_old|15
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】cfg_evnt_iop_attr_info_au|13
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】cfg_svc_edclabel_93054_iop_tag_ref_d|9
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】cfg_svc_edclabel_activity_label_d|9
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】cfg_svc_edclabel_93072_iop_tag_ref_channel_d|9
+2026-06-11 16:29:14.093 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm2_resource_conf|3
+2026-06-11 16:29:14.094 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm2_resource_para|3
+2026-06-11 16:29:14.094 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm2_conn_manager|3
+2026-06-11 16:29:14.094 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】sm2_conn_param|3
+2026-06-11 16:29:14.094 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 【查询结果】svc_iop_filter_attr_info_93062|3
+2026-06-11 16:29:14.094 [main] INFO  com.newland.storm.tool.impl.JDBCTool - 执行sql：select c_parent.relname,count(*) as cnt FROM pg_partition part JOIN pg_class c_parent ON part.parentid = c_parent.oid JOIN pg_namespace nsp ON c_parent.relnamespace = nsp.oid where nsp.nspname = 'edclabel' AND part.parttype IN ('p', 's') group by c_parent.relname order by count(*) desc，执行结果：30，执行耗时：214毫秒
+2026-06-11 16:29:14.094 [main] INFO  com.newland.storm.common.util.jdbc.JDBCUtil - 关闭连接池：org.apache.commons.dbcp.BasicDataSource@78b729e6
