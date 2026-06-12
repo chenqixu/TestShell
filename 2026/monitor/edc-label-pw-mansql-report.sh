@@ -17,8 +17,10 @@ system_name=`uname`
 ##路径
 FWDIR="$(cd `dirname $0`;pwd)"
 echo "["`date +"%Y-%m-%d %H:%M:%S"`"]路径 ${FWDIR}"
+##慢SQL发送计数器
+send_mail_max=5
 
-#读取文件里的计算器
+#读取文件里的计数器
 send_mail_cnt=`cat ${FWDIR}/info/pw_mansql.cnt`
 echo "["`date +"%Y-%m-%d %H:%M:%S"`"]发送邮件计数器为=${send_mail_cnt}"
 let 'send_mail_cnt+=1'
@@ -35,6 +37,13 @@ req_str1_cnt=`cat ${FWDIR}/info/pw_mansql.info|grep '查询结果】'|wc -l`
 req_str1=`cat ${FWDIR}/info/pw_mansql.info|grep '查询结果】'|awk -F '查询结果】' '{print $2}'|awk -F '|' '{print "<tr><td>"$1"</td><td>"$2"</td><td>"$3"</td><td>"$4"</td><td>"$5"</td><td>"$6"</td></tr>"}'`
 if [[ ${req_str1_cnt} -eq 0 ]]; then
     echo "["`date +"%Y-%m-%d %H:%M:%S"`"]慢SQL计数器为0，退出。"
+
+    #判断发送邮件计数器
+    if [[ ${send_mail_cnt} -ge ${send_mail_max} ]]; then
+        #发送邮件计数器清零
+        echo "["`date +"%Y-%m-%d %H:%M:%S"`"]发送邮件计数器清零"
+        echo "0" > ${FWDIR}/info/pw_mansql.cnt
+    fi
     exit 1;
 else
     echo "["`date +"%Y-%m-%d %H:%M:%S"`"]慢SQL计数器 ${req_str1_cnt}"
@@ -45,7 +54,7 @@ echo "<h2>慢SQL个数：${req_str1_cnt}</h2>"${req_str}${req_str1}"</table>" >>
 echo "["`date +"%Y-%m-%d %H:%M:%S"`"]邮件内容 `cat ${FWDIR}/info/pw_mansql_send_data.info`"
 
 #判断发送邮件计数器
-if [[ ${send_mail_cnt} -ge 5 ]]; then
+if [[ ${send_mail_cnt} -ge ${send_mail_max} ]]; then
     #发邮件
     #标题，一分钟一次，分钟级别
     subject="标签管理平台-慢SQL监控"`date '+%Y-%m-%dX%H:%M'`
