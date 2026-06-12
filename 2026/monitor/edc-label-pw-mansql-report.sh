@@ -18,6 +18,12 @@ system_name=`uname`
 FWDIR="$(cd `dirname $0`;pwd)"
 echo "["`date +"%Y-%m-%d %H:%M:%S"`"]路径 ${FWDIR}"
 
+#读取文件里的计算器
+send_mail_cnt=`cat ${FWDIR}/info/pw_mansql.cnt`
+echo "["`date +"%Y-%m-%d %H:%M:%S"`"]发送邮件计数器为=${send_mail_cnt}"
+let 'send_mail_cnt+=1'
+echo ${send_mail_cnt} > ${FWDIR}/info/pw_mansql.cnt
+
 #慢SQL查询
 #sh /bi/app/realtime-jstorm/nljstorm jdbc toolconfig/jdbc_pw_mansql.yaml > ${FWDIR}/info/pw_mansql.info
 
@@ -34,27 +40,39 @@ else
     echo "["`date +"%Y-%m-%d %H:%M:%S"`"]慢SQL计数器 ${req_str1_cnt}"
 fi
 
-#表结尾
-echo "<h2>慢SQL个数：${req_str1_cnt}</h2>"${req_str}${req_str1}"</table>" > ${FWDIR}/info/pw_mansql_send_data.info
+#表结尾，追加模式
+echo "<h2>慢SQL个数：${req_str1_cnt}</h2>"${req_str}${req_str1}"</table>" >> ${FWDIR}/info/pw_mansql_send_data.info
 echo "["`date +"%Y-%m-%d %H:%M:%S"`"]邮件内容 `cat ${FWDIR}/info/pw_mansql_send_data.info`"
 
-#标题，一分钟一次，分钟级别
-subject="标签管理平台-慢SQL监控"`date '+%Y-%m-%dX%H:%M'`
-echo "["`date +"%Y-%m-%d %H:%M:%S"`"]邮件标题 ${subject}"
-exit 1;
+#判断发送邮件计数器
+if [[ ${send_mail_cnt} -ge 5 ]]; then
+    #发邮件
+    #标题，一分钟一次，分钟级别
+    subject="标签管理平台-慢SQL监控"`date '+%Y-%m-%dX%H:%M'`
+    echo "["`date +"%Y-%m-%d %H:%M:%S"`"]邮件标题 ${subject}"
+    #exit 1;
 
-#邮件发送
-retrycnt=0
-while [[ ${retrycnt} -lt 1 ]]
-do
-  #send email
-  sh /bi/app/realtime-jstorm/nljstorm send_email toolconfig/send_pw_mansql_139email.yaml --subject "${subject}"
-  if [[ $? -eq 0 ]]; then
-    echo "send mail success"
-    break
-  else
-    echo "send mail fail, retry"
-  fi
-  let 'retrycnt+=1'
-  sleep 3
-done
+    #邮件发送
+    retrycnt=0
+    while [[ ${retrycnt} -lt 5 ]]
+    do
+      #send email
+      #sh /bi/app/realtime-jstorm/nljstorm send_email toolconfig/send_pw_mansql_139email.yaml --subject "${subject}"
+      if [[ $? -eq 0 ]]; then
+        echo "send mail success"
+        #发送成功，文件内容清零
+        echo "["`date +"%Y-%m-%d %H:%M:%S"`"]发送成功，文件内容清零"
+        echo "" > ${FWDIR}/info/pw_mansql_send_data.info
+        break
+      else
+        echo "send mail fail, retry"
+      fi
+      let 'retrycnt+=1'
+      sleep 3
+    done
+
+    #发送邮件计数器清零
+    echo "["`date +"%Y-%m-%d %H:%M:%S"`"]发送邮件计数器清零"
+    echo "0" > ${FWDIR}/info/pw_mansql.cnt
+fi
+
