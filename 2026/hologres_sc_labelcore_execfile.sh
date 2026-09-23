@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 ##参数检查
-if [ $# -ne 1 ]; then
+if [[ $# -ne 1 ]]; then
     echo "你需要输入1个参数."
     echo "1] 执行的SQL文件（可以是本目录下的，也可以是完整路径）."
     exit 1
 fi
 exec_sql_file=$1
 # 判断是否是文件
-if [ -f "${exec_sql_file}" ]; then
+if [[ -f "${exec_sql_file}" ]]; then
     echo "执行sql文件: ${exec_sql_file}"
 else
     echo "${exec_sql_file}不是文件"
@@ -17,7 +17,7 @@ echo "=====5行文件示例内容展示====="
 awk 'NR <= 5 {print "["NR"]: "$0}' "${exec_sql_file}"
 echo "====="
 read -p "确定要继续吗? [y/N]: " confirm
-if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
+if [[ "$confirm" = "y" ] || [ "$confirm" = "Y" ]]; then
     echo "继续执行..."
 else
     echo "操作已取消"
